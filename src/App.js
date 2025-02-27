@@ -12,8 +12,8 @@ function App() {
     <div class="min-h-screen flex flex-col">
       <main class="flex-grow pb-28">
         <section id="hero"><Hero /></section>
-        <section id="menu"><Menu /></section>
         <section id="about"><About /></section>
+        <section id="menu"><Menu /></section>
         <section id="contact"><Contact /></section>
         <Footer />
       </main>

@@ -36,7 +36,6 @@ const Footer = () => {
 
   return (
     <>
-      {/* 🔥 Gray Overlay */}
       <AnimatePresence>
         {isExpanded && (
           <motion.div 
@@ -54,7 +53,6 @@ const Footer = () => {
         )}
       </AnimatePresence>
 
-      {/* 🔥 Footer Section */}
       <motion.footer
         className="fixed bottom-0 left-0 w-full bg-gray-900 text-gray-300 z-50"
         initial={false}
@@ -63,10 +61,8 @@ const Footer = () => {
         onAnimationComplete={() => setShowContent(isExpanded)}
       >
         <div className="container mx-auto py-4 px-4 flex flex-col sm:flex-row justify-between items-center h-auto sm:h-16">
-          {/* Footer Title */}
           <h2 className="text-lg font-bold">DEN FETE BURMESER</h2>
 
-          {/* Footer Links */}
           <ul className="flex space-x-6 text-sm items-center">
             <li><a href="#menu" className="hover:text-white">MENY</a></li>
             <li><a href="#about" className="hover:text-white">OM OSS</a></li>
@@ -81,7 +77,7 @@ const Footer = () => {
                     setTimeout(() => setIsExpanded(false), 500);
                   } else {
                     setIsExpanded(true);
-                    setTimeout(() => setShowContent(true), 400); // ✅ Delay to prevent flickering
+                    setTimeout(() => setShowContent(true), 400); 
                     setSelectedItem(null);
                   }
                 }}
@@ -92,7 +88,6 @@ const Footer = () => {
           </ul>
         </div>
 
-        {/* 🔥 Expanding Section */}
         <AnimatePresence mode="wait">
           {isExpanded && showContent && (
             <motion.div
@@ -103,7 +98,6 @@ const Footer = () => {
               style={{ maxHeight: "70vh" }}
             >
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {/* Catering Menu */}
                 <div className="text-white">
                   <h2 className="text-xl font-bold mb-4">CATERING MENY</h2>
                   <ul className="space-y-3">
@@ -121,7 +115,6 @@ const Footer = () => {
                     ))}
                   </ul>
 
-                  {/* Show Selected Item (Image + Description) */}
                   {selectedItem && (
                     <motion.div 
                       className="mt-6 p-4 bg-gray-700 rounded-lg text-white"
@@ -140,7 +133,6 @@ const Footer = () => {
                   )}
                 </div>
 
-                {/* Order Form */}
                 <div className="w-full max-w-sm mx-auto">
                   <h2 className="text-xl font-bold text-white mb-2 sm:text-lg">INFORMASJON</h2>
                   <form className="space-y-3 sm:space-y-2">
@@ -148,7 +140,6 @@ const Footer = () => {
                     <input type="tel" placeholder="TELEFON NUMMER" className="w-full border p-2 sm:p-1 rounded text-black text-sm" />
                     <input type="text" placeholder="LEVERINGSSTED" className="w-full border p-2 sm:p-1 rounded text-black text-sm" />
 
-                    {/* Date Picker */}
                     <DatePicker 
                       selected={selectedDate}
                       onChange={(date) => setSelectedDate(date)}
@@ -158,7 +149,6 @@ const Footer = () => {
                       wrapperClassName="w-full"
                     />
 
-                    {/* Checkbox for Extra Request */}
                     <label className="flex items-center space-x-2 text-white text-sm">
                       <input type="checkbox" className="w-4 h-4" onChange={(e) => setCustomRequest(e.target.checked)} />
                       <span>Noe ekstra å tilføye?</span>
@@ -170,13 +160,13 @@ const Footer = () => {
                         initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} />
                     )}
                     <button 
-                      type="button" // ✅ Prevents form from auto-submitting
+                      type="button" 
                       className="bg-red-500 text-white px-4 py-2 sm:px-3 sm:py-1 rounded w-full hover:bg-red-600 text-sm"
                       onClick={(e) => {
-                        e.preventDefault(); // ✅ Prevents page refresh
-                        setShowContent(false); // ✅ Hides form content
+                        e.preventDefault(); 
+                        setShowContent(false); 
                         setCustomRequest(false);
-                        setTimeout(() => setIsExpanded(false), 500); // ✅ Collapses smoothly
+                        setTimeout(() => setIsExpanded(false), 500); 
                       }}
                     >
                       Send forespørsel
