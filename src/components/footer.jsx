@@ -47,6 +47,7 @@ const Footer = () => {
             onClick={(e) => {
               e.preventDefault();
               setShowContent(false);
+              setCustomRequest(false);
               setTimeout(() => setIsExpanded(false), 500);
             }}
           />
@@ -55,7 +56,7 @@ const Footer = () => {
 
       {/* 🔥 Footer Section */}
       <motion.footer
-        className="fixed bottom-0 left-0 w-full bg-[#B05C40] text-gray-300 z-50"
+        className="fixed bottom-0 left-0 w-full bg-gray-900 text-gray-300 z-50"
         initial={false}
         animate={{ height: isExpanded ? "80vh" : "auto" }}
         transition={{ duration: 0.5, ease: "easeInOut" }}
@@ -76,6 +77,7 @@ const Footer = () => {
                 onClick={() => {
                   if (isExpanded) {
                     setShowContent(false);
+                    setCustomRequest(false);
                     setTimeout(() => setIsExpanded(false), 500);
                   } else {
                     setIsExpanded(true);
@@ -173,6 +175,7 @@ const Footer = () => {
                       onClick={(e) => {
                         e.preventDefault(); // ✅ Prevents page refresh
                         setShowContent(false); // ✅ Hides form content
+                        setCustomRequest(false);
                         setTimeout(() => setIsExpanded(false), 500); // ✅ Collapses smoothly
                       }}
                     >
