@@ -6,9 +6,7 @@ import MenuBildeTest1 from "../assets/hero.png";
 import MenuBildeTest2 from "../assets/lage-mat.jpg";
 import MenuBildeTest3 from "../assets/Fete-Burmeser-logo.png";
 
-const Footer = () => {
-  const [isExpanded, setIsExpanded] = useState(false);
-  const [showContent, setShowContent] = useState(false);
+const Footer = ({ isExpanded, setIsExpanded, showContent, setShowContent }) => {
   const [selectedItem, setSelectedItem] = useState(null);
   const [customRequest, setCustomRequest] = useState(false);
   const [selectedDate, setSelectedDate] = useState(null);
@@ -36,6 +34,7 @@ const Footer = () => {
 
   return (
     <>
+      {/* 🔥 Gray Overlay */}
       <AnimatePresence>
         {isExpanded && (
           <motion.div 
@@ -43,8 +42,7 @@ const Footer = () => {
             initial={{ opacity: 0 }} 
             animate={{ opacity: 1 }}  
             exit={{ opacity: 0, transition: { duration: 0.4, ease: "easeOut" } }} 
-            onClick={(e) => {
-              e.preventDefault();
+            onClick={() => {
               setShowContent(false);
               setCustomRequest(false);
               setTimeout(() => setIsExpanded(false), 500);
@@ -53,15 +51,16 @@ const Footer = () => {
         )}
       </AnimatePresence>
 
+      {/* 🔥 Footer Section */}
       <motion.footer
-        className="fixed bottom-0 left-0 w-full bg-gray-900 text-gray-300 z-50"
+        className="fixed bottom-0 left-0 w-full bg-[#B05C40] text-[#F5E9E2] z-50"
         initial={false}
         animate={{ height: isExpanded ? "80vh" : "auto" }}
         transition={{ duration: 0.5, ease: "easeInOut" }}
         onAnimationComplete={() => setShowContent(isExpanded)}
       >
         <div className="container mx-auto py-4 px-4 flex flex-col sm:flex-row justify-between items-center h-auto sm:h-16">
-          <h2 className="text-lg font-bold">DEN FETE BURMESER</h2>
+          <h1 style={{ fontFamily: '"Vibes", cursive'}} >DEN FETE BURMESER</h1>
 
           <ul className="flex space-x-6 text-sm items-center">
             <li><a href="#menu" className="hover:text-white">MENY</a></li>
@@ -69,7 +68,7 @@ const Footer = () => {
             <li><a href="#contact" className="hover:text-white">KONTAKT</a></li>
             <li>
               <button 
-                className="bg-red-500 text-white px-4 py-2 sm:px-3 sm:py-1 h-10 rounded hover:bg-red-600 transition flex items-center justify-center text-sm"
+                className="bg-[#8A4A32] text-white px-4 py-2 sm:px-3 sm:py-1 h-10 rounded hover:bg-[#6D3A27] transition flex items-center justify-center text-sm"
                 onClick={() => {
                   if (isExpanded) {
                     setShowContent(false);
@@ -77,7 +76,7 @@ const Footer = () => {
                     setTimeout(() => setIsExpanded(false), 500);
                   } else {
                     setIsExpanded(true);
-                    setTimeout(() => setShowContent(true), 400); 
+                    setTimeout(() => setShowContent(true), 400);
                     setSelectedItem(null);
                   }
                 }}
@@ -88,24 +87,26 @@ const Footer = () => {
           </ul>
         </div>
 
+        {/* 🔥 Expanding Section */}
         <AnimatePresence mode="wait">
           {isExpanded && showContent && (
             <motion.div
-              className="p-6 bg-gray-800 rounded-lg shadow-lg max-w-5xl mx-auto overflow-y-auto"
+              className="p-6 bg-[#8A4A32] rounded-lg shadow-lg max-w-5xl mx-auto overflow-y-auto"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 20, transition: { duration: 0.4 } }}
               style={{ maxHeight: "70vh" }}
             >
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Catering Menu */}
                 <div className="text-white">
-                  <h2 className="text-xl font-bold mb-4">CATERING MENY</h2>
+                  <h2 className="text-xl font-bold mb-4" >CATERING MENY</h2>
                   <ul className="space-y-3">
                     {cateringMenu.map((item, index) => (
                       <motion.li 
                         key={index} 
                         className={`border p-3 rounded cursor-pointer transition 
-                          ${selectedItem?.name === item.name ? "bg-red-500 text-white scale-105" : "bg-gray-700 hover:bg-gray-600"}`}
+                          ${selectedItem?.name === item.name ? "bg-[#D99673] text-white scale-105" : "bg-[#6D3A27] hover:bg-[#D99673]"}`}
                         onClick={() => setSelectedItem(selectedItem?.name === item.name ? null : item)}
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
@@ -117,7 +118,7 @@ const Footer = () => {
 
                   {selectedItem && (
                     <motion.div 
-                      className="mt-6 p-4 bg-gray-700 rounded-lg text-white"
+                      className="mt-6 p-4 bg-[#6D3A27] rounded-lg text-white"
                       initial={{ opacity: 0, y: 10 }} 
                       animate={{ opacity: 1, y: 0 }} 
                       exit={{ opacity: 0, y: 10, transition: { duration: 0.4 } }} 
@@ -133,6 +134,7 @@ const Footer = () => {
                   )}
                 </div>
 
+                {/* Order Form */}
                 <div className="w-full max-w-sm mx-auto">
                   <h2 className="text-xl font-bold text-white mb-2 sm:text-lg">INFORMASJON</h2>
                   <form className="space-y-3 sm:space-y-2">
@@ -148,7 +150,7 @@ const Footer = () => {
                       className="w-full border p-2 sm:p-1 rounded text-black text-sm"
                       wrapperClassName="w-full"
                     />
-
+                    
                     <label className="flex items-center space-x-2 text-white text-sm">
                       <input type="checkbox" className="w-4 h-4" onChange={(e) => setCustomRequest(e.target.checked)} />
                       <span>Noe ekstra å tilføye?</span>
@@ -159,14 +161,14 @@ const Footer = () => {
                         placeholder="Skriv din forespørsel her..." 
                         initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} />
                     )}
+
                     <button 
                       type="button" 
-                      className="bg-red-500 text-white px-4 py-2 sm:px-3 sm:py-1 rounded w-full hover:bg-red-600 text-sm"
-                      onClick={(e) => {
-                        e.preventDefault(); 
+                      className="bg-[#D99673] text-white px-4 py-2 sm:px-3 sm:py-1 rounded w-full hover:bg-[#B05C40] text-sm"
+                      onClick={() => {
                         setShowContent(false); 
                         setCustomRequest(false);
-                        setTimeout(() => setIsExpanded(false), 500); 
+                        setTimeout(() => setIsExpanded(false), 500);
                       }}
                     >
                       Send forespørsel
