@@ -13,18 +13,16 @@ function App() {
   const [showContent, setShowContent] = useState(false);
 
   return (
-    
     <div className="min-h-screen  bg-[#F5E9E2] flex flex-col">
       <main className="flex-grow pb-28">
         <section id="hero"><Hero /></section>
         <section id="about"><About /></section>
-        <section id="offerings"><Offerings /></section>
+        {/* <section id="offerings"><Offerings /></section> */}
         <section id="menu"><Menu setIsExpanded={setIsExpanded} setShowContent={setShowContent} /></section>
         <section id="contact"><Contact /></section>
         <Footer isExpanded={isExpanded} setIsExpanded={setIsExpanded} showContent={showContent} setShowContent={setShowContent}/>
       </main>
-     
-  </div>
+    </div>
   );
 }
 

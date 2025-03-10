@@ -9,7 +9,7 @@ const ContactSection = () => {
       <div className="bg-white shadow-lg p-8 rounded-lg w-full max-w-5xl flex flex-col md:flex-row gap-12">
         
         {/* 🟠 Left Side: Contact Info + Map */}
-        <div className="flex flex-col w-full md:w-1/2">
+        <div className="flex flex-col w-full">
           <h2 className="text-4xl font-bold text-[#B05C40] mb-4 text-center md:text-left">📍 FINN OSS</h2>
           <p className="text-gray-700 mb-2 text-center md:text-left">📞 <strong>+47 1234578</strong></p>
           <p className="text-gray-700 mb-6 text-center md:text-left">📍 Akershusstranda 25, 0150 Oslo</p>
@@ -30,42 +30,6 @@ const ContactSection = () => {
             ></iframe>
           </motion.div>
         </div>
-
-        {/* 🟠 Right Side: Contact Form */}
-        <motion.form
-          className="flex flex-col w-full md:w-1/2 bg-[#F5E9E2] p-6 rounded-lg shadow-md"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-        >
-          <h2 className="text-4xl font-bold text-[#B05C40] mb-6 text-center md:text-left">SEND OSS EN MELDING</h2>
-
-          <label className="block mb-2 text-[#B05C40] font-semibold">Ditt navn</label>
-          <input 
-            type="text" 
-            className="w-full border border-[#B05C40] p-2 rounded mb-4 focus:outline-none focus:ring-2 focus:ring-[#B05C40]" 
-          />
-
-          <label className="block mb-2 text-[#B05C40] font-semibold">Din e-post</label>
-          <input 
-            type="email" 
-            className="w-full border border-[#B05C40] p-2 rounded mb-4 focus:outline-none focus:ring-2 focus:ring-[#B05C40]" 
-          />
-
-          <label className="block mb-2 text-[#B05C40] font-semibold">Melding</label>
-          <textarea 
-            className="w-full border border-[#B05C40] p-2 rounded mb-4 flex-grow focus:outline-none focus:ring-2 focus:ring-[#B05C40]" 
-            rows="5"
-          ></textarea>
-
-          <button 
-            type="submit"
-            className="bg-[#B05C40] text-white px-4 py-2 rounded-md hover:bg-[#8B4533] transition w-full font-semibold"
-          >
-            Send Melding
-          </button>
-        </motion.form>
-
       </div>
 
     </section>

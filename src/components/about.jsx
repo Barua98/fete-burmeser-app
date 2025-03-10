@@ -4,17 +4,15 @@ import { motion } from "framer-motion";
 const About = () => {
     return (
         <section className="py-16 px-6 md:px-12 flex flex-col md:flex-row items-center gap-12 w-full bg-[#F5E9E2]">
-            {/* Left Side - Image */}
             <motion.img 
                 src={LageMat} 
                 alt="Restaurant" 
-                className="w-full md:w-1/2 rounded-lg shadow-lg"
+                className="w-full md:w-1/3 rounded-lg shadow-lg"
                 initial={{ opacity: 0, x: -50 }} 
                 animate={{ opacity: 1, x: 0 }} 
                 transition={{ duration: 0.6 }}
             />
-            
-            {/* Right Side - Text */}
+
             <motion.div 
                 className="text-center md:text-left md:w-1/2"
                 initial={{ opacity: 0, x: 50 }} 
