@@ -81,6 +81,9 @@ const Footer = ({ isExpanded, setIsExpanded, showContent, setShowContent }) => {
     }
   };
 
+  const isValidSelection = () => selectedItems.length > 0 && selectedItems.every(item => item.quantity >= 5);
+
+
   const renderSelectedItems = () => {
     return selectedItems.map((item, index) => (
       <div key={index} className="flex justify-between items-center mb-2">
@@ -94,7 +97,9 @@ const Footer = ({ isExpanded, setIsExpanded, showContent, setShowContent }) => {
             onChange={(e) => updateItemQuantity(item, parseInt(e.target.value))}
             className="w-14 text-center border border-[#D99673] bg-[#F5E9E2] text-black rounded"
           />
-  
+          {item.quantity < 5 && (
+            <p className="text-red-400 text-xs">Min. 5 portions required</p>
+          )}
           <button onClick={() => addItemToSelection(item)} className="px-2 bg-[#D99673] text-white rounded hover:bg-[#B05C40] transition">+</button>
           <button onClick={() => removeItemFromSelection(item)} className="px-2 bg-[#D99673] text-white rounded hover:bg-[#B05C40] transition">-</button>
         </div>
@@ -198,11 +203,14 @@ const Footer = ({ isExpanded, setIsExpanded, showContent, setShowContent }) => {
                 </div>
                 <div className="mt-4">
                   <button 
-                    className="bg-[#D99673] text-white w-full px-6 py-2 rounded hover:bg-[#B05C40] transition"
+                    className={`w-full px-6 py-2 rounded transition ${isValidSelection() ? "bg-[#D99673] text-white hover:bg-[#B05C40]" : "bg-gray-500 text-gray-300 cursor-not-allowed"}`}
                     onClick={() => console.log("Go to next step!")} 
                   >
                     Next Step
                   </button>
+                  {!isValidSelection() && selectedItems.length > 0 && (
+                      <p className="text-red-400 text-center mt-2">Each dish must have at least 5 portions!</p>
+                  )}
                 </div>
               </div>
             </motion.div>
