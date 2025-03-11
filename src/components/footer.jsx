@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTrash } from "@fortawesome/free-solid-svg-icons";
 
 const menu = {
   snacks: [
@@ -57,7 +59,7 @@ const Footer = ({ isExpanded, setIsExpanded, showContent, setShowContent }) => {
         key={index}
         className={`border p-3 rounded cursor-pointer transition bg-[#6D3A27] hover:bg-[#D99673] text-white`}
         onClick={() => addItemToSelection(item)}
-        whileHover={{ scale: 1.05 }}
+        whileHover={{ scale: 0.95 }}
         whileTap={{ scale: 0.95 }}
       >
         <span className="font-semibold">{item.name}</span> - {item.price} kr
@@ -67,17 +69,39 @@ const Footer = ({ isExpanded, setIsExpanded, showContent, setShowContent }) => {
     ));
   };
 
+  const updateItemQuantity = (item, newQuantity) => {
+    if (isNaN(newQuantity) || newQuantity < 0) return; 
+  
+    if (newQuantity === 0) {
+      setSelectedItems(prevItems => prevItems.filter(i => i.name !== item.name));
+    } else {
+      setSelectedItems(prevItems =>
+        prevItems.map(i => i.name === item.name ? { ...i, quantity: newQuantity } : i)
+      );
+    }
+  };
+
   const renderSelectedItems = () => {
     return selectedItems.map((item, index) => (
       <div key={index} className="flex justify-between items-center mb-2">
-        <span>{item.name} x {item.quantity}</span>
+        <span>{item.name}</span>
+  
         <div className="flex items-center space-x-2">
-          <button onClick={() => addItemToSelection(item)} className="px-2 bg-[#D99673] text-white rounded">+</button>
-          <button onClick={() => removeItemFromSelection(item)} className="px-2 bg-[#D99673] text-white rounded">-</button>
+          <input
+            type="number"
+            min="1"
+            value={item.quantity}
+            onChange={(e) => updateItemQuantity(item, parseInt(e.target.value))}
+            className="w-14 text-center border border-[#D99673] bg-[#F5E9E2] text-black rounded"
+          />
+  
+          <button onClick={() => addItemToSelection(item)} className="px-2 bg-[#D99673] text-white rounded hover:bg-[#B05C40] transition">+</button>
+          <button onClick={() => removeItemFromSelection(item)} className="px-2 bg-[#D99673] text-white rounded hover:bg-[#B05C40] transition">-</button>
         </div>
       </div>
     ));
   };
+
   return (
     <>
       {/* Gray Overlay */}
@@ -100,12 +124,12 @@ const Footer = ({ isExpanded, setIsExpanded, showContent, setShowContent }) => {
       <motion.footer
         className="fixed bottom-0 left-0 w-full bg-[#B05C40] text-[#F5E9E2] z-50"
         initial={false}
-        animate={{ height: isExpanded ? "90vh" : "auto" }}
+        animate={{ height: isExpanded ? "100vh" : "auto" }}
         transition={{ duration: 0.6, ease: "easeInOut" }}
         onAnimationComplete={() => setShowContent(isExpanded)}
       >
         <div className="container mx-auto py-4 px-4 flex flex-col sm:flex-row justify-between items-center h-auto sm:h-16">
-          <h1 style={{ fontFamily: '"Vibes", cursive' }}>DEN FETE BURMESER</h1>
+          <h1>DEN FETE BURMESER</h1>
           <ul className="flex space-x-6 text-sm items-center">
             <li><a href="#menu" className="hover:text-white">MENY</a></li>
             <li><a href="#about" className="hover:text-white">OM OSS</a></li>
@@ -132,11 +156,11 @@ const Footer = ({ isExpanded, setIsExpanded, showContent, setShowContent }) => {
         <AnimatePresence mode="wait">
           {isExpanded && showContent && (
             <motion.div 
-              className="p-6 bg-[#8A4A32] rounded-lg shadow-lg max-w-5xl mx-auto overflow-y-auto grid grid-cols-1 md:grid-cols-2 gap-6"
+              className="p-6 bg-[#8A4A32] rounded-lg shadow-lg max-w-6xl mx-auto overflow-y-auto grid grid-cols-1 md:grid-cols-2 gap-6"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 20, transition: { duration: 0.4 } }}
-              style={{ maxHeight: "80vh" }}
+              style={{ maxHeight: "90vh" }}
             >
               {/* Information */}
               <div className="text-white mb-6 md:col-span-2">
@@ -152,34 +176,34 @@ const Footer = ({ isExpanded, setIsExpanded, showContent, setShowContent }) => {
               </div>
   
               {/* Menu */}
-              <div className="text-white">
-              <h2 className="text-xl font-bold mb-4">Menu</h2>
+              <div className="text-white overflow-y-auto max-h-[50vh] sm:max-h-[60vh] scrollbar-thin scrollbar-thumb-[#D99673] overflow-x-hidden">
+              <h2 className="text-xl font-bold mb-4 ">Menu</h2>
                 <div className="flex justify-center space-x-4 mb-4">
-                  <button className={`px-4 py-2 rounded ${activeTab === "snacks" ? "bg-[#D99673]" : "bg-[#6D3A27]"}`} onClick={() => setActiveTab("snacks")}>Snacks</button>
-                  <button className={`px-4 py-2 rounded ${activeTab === "noodles" ? "bg-[#D99673]" : "bg-[#6D3A27]"}`} onClick={() => setActiveTab("noodles")}>Noodles</button>
-                  <button className={`px-4 py-2 rounded ${activeTab === "rice" ? "bg-[#D99673]" : "bg-[#6D3A27]"}`} onClick={() => setActiveTab("rice")}>Rice</button>
+                  <button className={`px-4 py-2 rounded hover:bg-[#B05C40] transition ${activeTab === "snacks" ? "bg-[#D99673]" : "bg-[#6D3A27]"}`} onClick={() => setActiveTab("snacks")}>Snacks</button>
+                  <button className={`px-4 py-2 rounded hover:bg-[#B05C40] transition ${activeTab === "noodles" ? "bg-[#D99673]" : "bg-[#6D3A27]"}`} onClick={() => setActiveTab("noodles")}>Noodles</button>
+                  <button className={`px-4 py-2 rounded hover:bg-[#B05C40] transition ${activeTab === "rice" ? "bg-[#D99673]" : "bg-[#6D3A27]"}`} onClick={() => setActiveTab("rice")}>Rice</button>
                 </div>
                 <ul className="space-y-3">{renderMenuItems()}</ul>
               </div>
   
               {/* Your Selection */}
-              <div className="text-white overflow-y-auto max-h-[50vh] sm:max-h-[60vh] scrollbar-thin scrollbar-thumb-[#D99673]">
+              <div className="text-white overflow-y-auto max-h-[50vh] sm:max-h-[60vh] scrollbar-thin scrollbar-thumb-[#D99673] overflow-x-hidden">
                 <h2 className="text-xl font-bold mb-4">Your Selection</h2>
                 {renderSelectedItems()}
-                <div className="mt-4">
+                <div className="mt-4 flex justify-between items-center">
                   <p className="font-semibold">Total: {calculateTotalPrice()} kr</p>
-                  <button onClick={emptyAll} className="mt-2 px-4 py-2 bg-[#D99673] text-white rounded">Empty All</button>
+                  <button onClick={emptyAll} className="px-4 py-2 bg-[#D99673] text-white rounded hover:bg-[#B05C40] transition">
+                  <FontAwesomeIcon icon={faTrash} size="lg" />
+                  </button>
                 </div>
-              </div>
-  
-              {/* "Next Step" Button */}
-              <div className="text-center md:col-span-2 mt-4">
-                <button 
-                  className="bg-[#D99673] text-white px-6 py-2 rounded hover:bg-[#B05C40] transition"
-                  onClick={() => console.log("Go to next step!")} 
-                >
-                  Next Step
-                </button>
+                <div className="mt-4">
+                  <button 
+                    className="bg-[#D99673] text-white w-full px-6 py-2 rounded hover:bg-[#B05C40] transition"
+                    onClick={() => console.log("Go to next step!")} 
+                  >
+                    Next Step
+                  </button>
+                </div>
               </div>
             </motion.div>
           )}
