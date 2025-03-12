@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
@@ -30,7 +30,34 @@ const menu = {
 
 const Footer = ({ isExpanded, setIsExpanded, showContent, setShowContent }) => {
   const [activeTab, setActiveTab] = useState("snacks");
-  const [selectedItems, setSelectedItems] = useState([]);
+  const [step, setStep]= useState(1);
+  const [userInfo, setUserInfo] = useState(() => {
+    const savedData = localStorage.getItem("userInfo");
+    return savedData ? JSON.parse(savedData) : {
+      name: "",
+      phone: "",
+      deliveryLocation: "",
+      eventType: "",
+      customEventType: "",
+      guestCount: "",
+      date: null,
+      allergies: "",
+      extraInfoChecked: false,
+      extraInfo: "",
+    };
+  });
+  const [selectedItems, setSelectedItems] = useState(() => {
+    const savedItems = localStorage.getItem("selectedItems");
+    return savedItems ? JSON.parse(savedItems) : [];
+  });
+  
+  useEffect(() => {
+    localStorage.setItem("selectedItems", JSON.stringify(selectedItems));
+  }, [selectedItems]);
+  
+  useEffect(() => {
+    localStorage.setItem("userInfo", JSON.stringify(userInfo));
+  }, [userInfo]);
 
   const emptyAll = () => setSelectedItems([]);
 
@@ -70,15 +97,18 @@ const Footer = ({ isExpanded, setIsExpanded, showContent, setShowContent }) => {
   };
 
   const updateItemQuantity = (item, newQuantity) => {
-    if (isNaN(newQuantity) || newQuantity < 0) return; 
-  
-    if (newQuantity === 0) {
-      setSelectedItems(prevItems => prevItems.filter(i => i.name !== item.name));
-    } else {
+    if (newQuantity === "" || isNaN(newQuantity)) {
       setSelectedItems(prevItems =>
-        prevItems.map(i => i.name === item.name ? { ...i, quantity: newQuantity } : i)
+        prevItems.map(i => i.name === item.name ? { ...i, quantity: "" } : i)
       );
+      return;
     }
+  
+    const quantity = Math.max(1, newQuantity); 
+  
+    setSelectedItems(prevItems =>
+      prevItems.map(i => i.name === item.name ? { ...i, quantity } : i)
+    );
   };
 
   const isValidSelection = () => selectedItems.length > 0 && selectedItems.every(item => item.quantity >= 5);
@@ -95,6 +125,11 @@ const Footer = ({ isExpanded, setIsExpanded, showContent, setShowContent }) => {
             min="1"
             value={item.quantity}
             onChange={(e) => updateItemQuantity(item, parseInt(e.target.value))}
+            onBlur={() => {
+              if (item.quantity === "" || isNaN(item.quantity)) {
+                updateItemQuantity(item, 1); 
+              }
+            }}
             className="w-14 text-center border border-[#D99673] bg-[#F5E9E2] text-black rounded"
           />
           {item.quantity < 5 && (
@@ -157,7 +192,6 @@ const Footer = ({ isExpanded, setIsExpanded, showContent, setShowContent }) => {
           </ul>
         </div>
   
-        {/* Expanded Content */}
         <AnimatePresence mode="wait">
           {isExpanded && showContent && (
             <motion.div 
@@ -165,7 +199,6 @@ const Footer = ({ isExpanded, setIsExpanded, showContent, setShowContent }) => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 20, transition: { duration: 0.4 } }}
-              style={{ maxHeight: "90vh" }}
             >
               {/* Information */}
               <div className="text-white mb-6 md:col-span-2">
@@ -181,16 +214,143 @@ const Footer = ({ isExpanded, setIsExpanded, showContent, setShowContent }) => {
               </div>
   
               {/* Menu */}
-              <div className="text-white overflow-y-auto max-h-[50vh] sm:max-h-[60vh] scrollbar-thin scrollbar-thumb-[#D99673] overflow-x-hidden">
-              <h2 className="text-xl font-bold mb-4 ">Menu</h2>
-                <div className="flex justify-center space-x-4 mb-4">
-                  <button className={`px-4 py-2 rounded hover:bg-[#B05C40] transition ${activeTab === "snacks" ? "bg-[#D99673]" : "bg-[#6D3A27]"}`} onClick={() => setActiveTab("snacks")}>Snacks</button>
-                  <button className={`px-4 py-2 rounded hover:bg-[#B05C40] transition ${activeTab === "noodles" ? "bg-[#D99673]" : "bg-[#6D3A27]"}`} onClick={() => setActiveTab("noodles")}>Noodles</button>
-                  <button className={`px-4 py-2 rounded hover:bg-[#B05C40] transition ${activeTab === "rice" ? "bg-[#D99673]" : "bg-[#6D3A27]"}`} onClick={() => setActiveTab("rice")}>Rice</button>
+              {step === 1 && (
+                    <motion.div 
+                    initial={{ opacity: 0, y: 10 }} 
+                    animate={{ opacity: 1, y: 0 }} 
+                    exit={{ opacity: 0, y: 10 }} 
+                    transition={{ duration: 0.3, ease: "easeInOut" }}
+                                >
+              <div>
+                <div className="text-white overflow-y-auto max-h-[50vh] sm:max-h-[60vh] scrollbar-thin scrollbar-thumb-[#D99673] overflow-x-hidden">
+                <h2 className="text-xl font-bold mb-4 ">Menu</h2>
+                  <div className="flex justify-center space-x-4 mb-4">
+                    <button className={`px-4 py-2 rounded hover:bg-[#B05C40] transition ${activeTab === "snacks" ? "bg-[#D99673]" : "bg-[#6D3A27]"}`} onClick={() => setActiveTab("snacks")}>Snacks</button>
+                    <button className={`px-4 py-2 rounded hover:bg-[#B05C40] transition ${activeTab === "noodles" ? "bg-[#D99673]" : "bg-[#6D3A27]"}`} onClick={() => setActiveTab("noodles")}>Noodles</button>
+                    <button className={`px-4 py-2 rounded hover:bg-[#B05C40] transition ${activeTab === "rice" ? "bg-[#D99673]" : "bg-[#6D3A27]"}`} onClick={() => setActiveTab("rice")}>Rice</button>
+                  </div>
+                  <ul className="space-y-3">{renderMenuItems()}</ul>
                 </div>
-                <ul className="space-y-3">{renderMenuItems()}</ul>
               </div>
-  
+                  </motion.div>
+              )}
+              {step === 2 && (
+                 <motion.div 
+                 initial={{ opacity: 0, y: 10 }} 
+                 animate={{ opacity: 1, y: 0 }} 
+                 exit={{ opacity: 0, y: 10 }} 
+                 transition={{ duration: 0.3, ease: "easeInOut" }}
+                 className="bg-[#6D3A27] p-6 rounded-lg shadow-lg text-white overflow-y-auto max-h-[60vh] scrollbar-thin scrollbar-thumb-[#D99673]"
+               >
+                 <h2 className="text-xl font-bold mb-4">Fyll inn informasjon</h2>
+               
+                 <form className="space-y-4">
+                   {/* Name */}
+                   <input type="text" placeholder="Navn" value={userInfo.name} onChange={(e) => setUserInfo({ ...userInfo, name: e.target.value })} className="w-full p-2 border rounded text-black" required />
+               
+                   {/* Phone Number */}
+                   <input type="tel" placeholder="Telefonnummer" value={userInfo.phone} onChange={(e) => setUserInfo({...userInfo, phone: e.target.value})} className="w-full p-2 border rounded text-black" required />
+               
+                   {/* Delivery Location */}
+                   <input type="text" placeholder="Leveringssted" value={userInfo.deliveryLocation} onChange={(e)=> setUserInfo({...userInfo, deliveryLocation: e.target.value})} className="w-full p-2 border rounded text-black" required />
+               
+                   {/* Type of Event */}
+                   <select 
+                     className="w-full p-2 border rounded text-black"
+                     value={userInfo.eventType} 
+                     onChange={(e) => setUserInfo({...userInfo, eventType: e.target.value})}
+                     required
+                   >
+                     <option value="" disabled>Velg type arrangement</option>
+                     <option value="bursdag">Bursdag</option>
+                     <option value="bryllup">Bryllup</option>
+                     <option value="firmafest">Firmafest</option>
+                     <option value="annet">Annet</option>
+                   </select>
+               
+                   {/* "Annet" (Other) Input Field - Only Show When Selected */}
+                   {userInfo.eventType === "annet" && (
+                     <input type="text" placeholder="Spesifiser type arrangement" value={userInfo.customEventType} onChange={(e) => setUserInfo({ ...userInfo, customEventType: e.target.value })}  className="w-full p-2 border rounded text-black" required />
+                   )}
+               
+                  {/* Guests & Date (Side by Side) */}
+                  <div className="flex space-x-4">
+                    <input 
+                      type="number" 
+                      min="1" 
+                      value={userInfo.guestCount}
+                      onChange={(e) => setUserInfo({...userInfo, guestCount: e.target.value})}
+                      placeholder="Antall gjester" 
+                      className="w-1/2 p-2 border rounded text-black" 
+                      required 
+                    />
+                    <div className="w-1/2">
+                      <DatePicker 
+                        selected={userInfo.date}
+                        onChange={(date) => setUserInfo({...userInfo, date})}
+                        dateFormat="dd/MM/yyyy"
+                        placeholderText="Velg dato"
+                        className="w-full p-2 border rounded text-black"
+                        required
+                        wrapperClassName="w-full"
+                      />
+                    </div>
+                  </div>
+                   <input type="text" placeholder="Allergier (valgfritt)" value={userInfo.allergies} onChange={(e) => setUserInfo({...userInfo, allergies: e.target.value})} className="w-full p-2 border rounded text-black" />
+               
+                   {/* Extra Information Checkbox */}
+                   <label className="flex items-center space-x-2">
+                     <input type="checkbox" className="w-4 h-4" checked={userInfo.extraInfoChecked} onChange={(e) => setUserInfo({...userInfo, extraInfoChecked: e.target.checked})} />
+                     <span>Ekstra informasjon</span>
+                   </label>
+               
+                   {/* Extra Info Textarea - Appears Only If Checkbox is Selected */}
+                   {userInfo.extraInfoChecked && (
+                     <textarea 
+                      value={userInfo.extraInfo}
+                      onChange={(e) => setUserInfo({...userInfo, extraInfo: e.target.value})}
+                      placeholder="Skriv din ekstra informasjon her..." 
+                      className="w-full p-2 border rounded text-black h-24 resize-none"
+                     />
+                   )}
+               
+                   {/* Buttons - Back & Send */}
+                   <div className="flex justify-between mt-4">
+                     <button 
+                       className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600 transition"
+                       onClick={() => setStep(1)} 
+                     >
+                       Tilbake
+                     </button>
+                     <button 
+                        className="px-4 py-2 bg-[#D99673] text-white rounded hover:bg-[#B05C40] transition"
+                        type="submit"
+                        onClick={(e) => {
+                          e.preventDefault();  // Prevent default form submission
+                          localStorage.removeItem("selectedItems");
+                          localStorage.removeItem("userInfo");
+                          setSelectedItems([]);
+                          setUserInfo({
+                            name: "",
+                            phone: "",
+                            deliveryLocation: "",
+                            eventType: "",
+                            customEventType: "",
+                            guestCount: "",
+                            date: null,
+                            allergies: "",
+                            extraInfoChecked: false,
+                            extraInfo: "",
+                          });
+                          alert("Forespørselen er sendt!");
+                        }}
+                      >
+                        Send Forespørsel
+                      </button>
+                   </div>
+                 </form>
+               </motion.div>
+              )}
               {/* Your Selection */}
               <div className="text-white overflow-y-auto max-h-[50vh] sm:max-h-[60vh] scrollbar-thin scrollbar-thumb-[#D99673] overflow-x-hidden">
                 <h2 className="text-xl font-bold mb-4">Your Selection</h2>
@@ -204,7 +364,10 @@ const Footer = ({ isExpanded, setIsExpanded, showContent, setShowContent }) => {
                 <div className="mt-4">
                   <button 
                     className={`w-full px-6 py-2 rounded transition ${isValidSelection() ? "bg-[#D99673] text-white hover:bg-[#B05C40]" : "bg-gray-500 text-gray-300 cursor-not-allowed"}`}
-                    onClick={() => console.log("Go to next step!")} 
+                    onClick={() => { 
+                      if (isValidSelection()) setStep(2); 
+                    }}
+                    disabled={!isValidSelection()}
                   >
                     Next Step
                   </button>
