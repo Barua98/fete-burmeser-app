@@ -31,6 +31,7 @@ const menu = {
 const Footer = ({ isExpanded, setIsExpanded, showContent, setShowContent }) => {
   const [activeTab, setActiveTab] = useState("snacks");
   const [step, setStep]= useState(1);
+  const [showNextButton, setShowNextButton] = useState(true);
   const [userInfo, setUserInfo] = useState(() => {
     const savedData = localStorage.getItem("userInfo");
     return savedData ? JSON.parse(savedData) : {
@@ -59,6 +60,18 @@ const Footer = ({ isExpanded, setIsExpanded, showContent, setShowContent }) => {
     localStorage.setItem("userInfo", JSON.stringify(userInfo));
   }, [userInfo]);
 
+  useEffect(() => {
+    if (isExpanded) {
+      document.documentElement.style.overflowY = "hidden"; // Hide scrollbar immediately
+    } else {
+      document.documentElement.style.overflowY = "auto"; // Restore scroll when closing
+    }
+  
+    return () => {
+      document.documentElement.style.overflowY = "auto"; // Cleanup when unmounting
+    };
+  }, [isExpanded]);
+  
   const emptyAll = () => setSelectedItems([]);
 
   const addItemToSelection = (item) => {
@@ -111,8 +124,7 @@ const Footer = ({ isExpanded, setIsExpanded, showContent, setShowContent }) => {
     );
   };
 
-  const isValidSelection = () => selectedItems.length > 0 && selectedItems.every(item => item.quantity >= 5);
-
+const isValidSelection = () => selectedItems.length > 0 && selectedItems.reduce((total, item) => total + item.quantity, 0) >= 5;
 
   const renderSelectedItems = () => {
     return selectedItems.map((item, index) => (
@@ -162,13 +174,15 @@ const Footer = ({ isExpanded, setIsExpanded, showContent, setShowContent }) => {
   
       {/* Footer Section */}
       <motion.footer
-        className="fixed bottom-0 left-0 w-full bg-[#B05C40] text-[#F5E9E2] z-50"
-        initial={false}
-        animate={{ height: isExpanded ? "100vh" : "auto" }}
-        transition={{ duration: 0.6, ease: "easeInOut" }}
-        onAnimationComplete={() => setShowContent(isExpanded)}
-      >
-        <div className="container mx-auto py-4 px-4 flex flex-col sm:flex-row justify-between items-center h-auto sm:h-16">
+          className={`fixed bottom-0 left-0 w-full bg-[#B05C40] text-[#F5E9E2] z-50 
+                      ${isExpanded ? 'overflow-y-auto' : 'overflow-hidden'} 
+                      max-h-screen sm:overflow-hidden`}
+          initial={false}
+          animate={{ height: isExpanded ? "100vh" : "auto" }}
+          transition={{ duration: 0.6, ease: "easeInOut" }}
+          onAnimationComplete={() => setShowContent(isExpanded)}
+        >
+        <div className="container mx-auto py-4 px-4 flex flex-wrap items-center justify-center sm:justify-between w-full h-auto sm:h-16 gap-2">
           <h1>DEN FETE BURMESER</h1>
           <ul className="flex space-x-6 text-sm items-center">
             <li><a href="#menu" className="hover:text-white">MENY</a></li>
@@ -222,7 +236,7 @@ const Footer = ({ isExpanded, setIsExpanded, showContent, setShowContent }) => {
                     transition={{ duration: 0.3, ease: "easeInOut" }}
                                 >
               <div>
-                <div className="text-white overflow-y-auto max-h-[50vh] sm:max-h-[60vh] scrollbar-thin scrollbar-thumb-[#D99673] overflow-x-hidden">
+              <div className="text-white overflow-y-auto h-[550px] sm:h-[550px] scrollbar-thin scrollbar-thumb-[#D99673] overflow-x-hidden">
                 <h2 className="text-xl font-bold mb-4 ">Menu</h2>
                   <div className="flex justify-center space-x-4 mb-4">
                     <button className={`px-4 py-2 rounded hover:bg-[#B05C40] transition ${activeTab === "snacks" ? "bg-[#D99673]" : "bg-[#6D3A27]"}`} onClick={() => setActiveTab("snacks")}>Snacks</button>
@@ -315,39 +329,61 @@ const Footer = ({ isExpanded, setIsExpanded, showContent, setShowContent }) => {
                    )}
                
                    {/* Buttons - Back & Send */}
-                   <div className="flex justify-between mt-4">
-                     <button 
-                       className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600 transition"
-                       onClick={() => setStep(1)} 
-                     >
-                       Tilbake
-                     </button>
-                     <button 
-                        className="px-4 py-2 bg-[#D99673] text-white rounded hover:bg-[#B05C40] transition"
-                        type="submit"
-                        onClick={(e) => {
-                          e.preventDefault();  // Prevent default form submission
-                          localStorage.removeItem("selectedItems");
-                          localStorage.removeItem("userInfo");
-                          setSelectedItems([]);
-                          setUserInfo({
-                            name: "",
-                            phone: "",
-                            deliveryLocation: "",
-                            eventType: "",
-                            customEventType: "",
-                            guestCount: "",
-                            date: null,
-                            allergies: "",
-                            extraInfoChecked: false,
-                            extraInfo: "",
-                          });
-                          alert("Forespørselen er sendt!");
-                        }}
-                      >
-                        Send Forespørsel
-                      </button>
-                   </div>
+                      <div className="mt-4 flex justify-center gap-4">
+                        {step === 1 ? (
+                          showNextButton && (  // Hide Next Step when clicked
+                            <button 
+                              className={`w-full px-6 py-2 rounded transition ${isValidSelection() ? "bg-[#D99673] text-white hover:bg-[#B05C40]" : "bg-gray-500 text-gray-300 cursor-not-allowed"}`}
+                              onClick={() => { 
+                                if (isValidSelection()) {
+                                  setStep(2); 
+                                  setShowNextButton(false);  // Hide Next Step
+                                }
+                              }}
+                              disabled={!isValidSelection()}
+                            >
+                              Next Step
+                            </button>
+                          )
+                        ) : (
+                          <>
+                            <button 
+                              className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600 transition w-1/2"
+                              onClick={() => { 
+                                setStep(1); 
+                                setShowNextButton(true);  
+                              }} 
+                            >
+                              Tilbake
+                            </button>
+                            <button 
+                              className="w-full px-6 py-2 rounded transition bg-[#D99673] text-white hover:bg-[#B05C40]"
+                              type="submit"
+                              onClick={(e) => {
+                                e.preventDefault();  
+                                localStorage.removeItem("selectedItems");
+                                localStorage.removeItem("userInfo");
+                                setSelectedItems([]);
+                                setUserInfo({
+                                  name: "",
+                                  phone: "",
+                                  deliveryLocation: "",
+                                  eventType: "",
+                                  customEventType: "",
+                                  guestCount: "",
+                                  date: null,
+                                  allergies: "",
+                                  extraInfoChecked: false,
+                                  extraInfo: "",
+                                });
+                                alert("Forespørselen er sendt!");
+                              }}
+                          >
+                      Send Forespørsel
+                    </button>
+                  </>
+                )}
+              </div>
                  </form>
                </motion.div>
               )}
@@ -382,7 +418,6 @@ const Footer = ({ isExpanded, setIsExpanded, showContent, setShowContent }) => {
       </motion.footer>
     </>
   );
-  
 };
 
 export default Footer;
