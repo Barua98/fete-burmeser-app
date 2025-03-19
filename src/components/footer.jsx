@@ -124,7 +124,9 @@ const Footer = ({ isExpanded, setIsExpanded, showContent, setShowContent }) => {
     );
   };
 
-const isValidSelection = () => selectedItems.length > 0 && selectedItems.reduce((total, item) => total + item.quantity, 0) >= 5;
+  const isValidSelection = () => {
+    return selectedItems.length > 0 && selectedItems.every(item => item.quantity >= 5);
+  };
 
   const renderSelectedItems = () => {
     return selectedItems.map((item, index) => (
@@ -182,29 +184,32 @@ const isValidSelection = () => selectedItems.length > 0 && selectedItems.reduce(
           transition={{ duration: 0.6, ease: "easeInOut" }}
           onAnimationComplete={() => setShowContent(isExpanded)}
         >
-        <div className="container mx-auto py-4 px-4 flex flex-wrap items-center justify-center sm:justify-between w-full h-auto sm:h-16 gap-2">
-          <h1>DEN FETE BURMESER</h1>
-          <ul className="flex space-x-6 text-sm items-center">
-            <li><a href="#menu" className="hover:text-white">MENY</a></li>
-            <li><a href="#about" className="hover:text-white">OM OSS</a></li>
-            <li>
-              <button 
-                className="bg-[#8A4A32] text-white px-4 py-2 sm:px-3 sm:py-1 h-10 rounded hover:bg-[#6D3A27] transition"
-                onClick={() => {
-                  if (isExpanded) {
-                    setShowContent(false); 
-                    setTimeout(() => setIsExpanded(false), 500);
-                  } else {
-                    setIsExpanded(true);
-                    setTimeout(() => setShowContent(true), 400);
-                  }
-                }}
-              >
-                {isExpanded ? "EXIT" : "CATERING"}
-              </button>
-            </li>
+       <div className="container mx-auto py-4 px-4 flex flex-wrap items-center justify-center sm:justify-between w-full h-auto sm:h-16 gap-2">
+        <h1>DEN FETE BURMESER</h1>
+        
+        {/* Hide buttons when footer is expanded */}
+        {!isExpanded && (
+          <ul className="flex space-x-6 text-sm items-cente ml-auto">
+            <li><a href="#menu" className="hover:text-white">MENU</a></li>
+            <li><a href="#about" className="hover:text-white">ABOUT</a></li>
           </ul>
-        </div>
+        )}
+
+        <button 
+          className="bg-[#8A4A32] text-white px-4 py-2 sm:px-3 sm:py-1 h-10 rounded hover:bg-[#6D3A27] transition"
+          onClick={() => {
+            if (isExpanded) {
+              setShowContent(false); 
+              setTimeout(() => setIsExpanded(false), 500);
+            } else {
+              setIsExpanded(true);
+              setTimeout(() => setShowContent(true), 400);
+            }
+          }}
+        >
+          {isExpanded ? "EXIT" : "CATERING"}
+        </button>
+      </div>
   
         <AnimatePresence mode="wait">
           {isExpanded && showContent && (
@@ -215,14 +220,25 @@ const isValidSelection = () => selectedItems.length > 0 && selectedItems.reduce(
               exit={{ opacity: 0, y: 20, transition: { duration: 0.4 } }}
             >
               {/* Information */}
-              <div className="text-white mb-6 md:col-span-2">
-                <h2 className="text-xl font-bold mb-4">Informasjon</h2>
-                <div className="bg-[#6D3A27] p-4 rounded-lg text-sm space-y-4">
-                  <h3 className="font-semibold">Levering</h3>
-                  <p>
-                    Alle rettene må bestilles i minimum fem porsjoner, og prisene er per porsjon/person. 
-                    Leveringstillegg er på 300,- ink moms innenfor Oslo ring 3. 
-                    Maten leveres i større catering/varmebokser, og vi legger med alt av nødvendig engangsservise/bestikk av resirkulerbart bambus/papp uten ekstra kostnader. Rettene er mer eller mindre spiseklare/serveringsklare ved ankomst.
+              <div className="text-black mb-6 md:col-span-2 bg-[#F5E9E2] p-6 rounded-lg shadow-md grid grid-cols-1 md:grid-cols-2 gap-6">
+                
+                {/* Delivery Section */}
+                <div>
+                  <h3 className="font-semibold text-lg text-[#B05C40]">Delivery</h3>
+                  <p className="text-gray-800 mt-2">
+                  All dishes must be ordered in <span className="text-[#B05C40] font-semibold">a minimum of 5 portions per dish.</span> Prices are per person.
+                  Delivery within Oslo ring 3 costs <span className="text-[#B05C40] font-semibold">300 kr incl. VAT.</span>
+                  </p>
+                  <p className="text-gray-800 mt-2">
+                  The food is delivered in thermal boxes with <span className="text-[#B05C40] font-semibold">recyclable disposable tableware/cutlery</span> made of bamboo and cardboard at no extra cost.
+                  </p>
+                </div>
+
+                {/* Payment Section */}
+                <div>
+                  <h3 className="font-semibold text-lg text-[#B05C40]">Payment</h3>
+                  <p className="text-gray-800 mt-2">
+                    You can pay with <span className="text-[#B05C40] font-semibold">card at the location.</span>
                   </p>
                 </div>
               </div>
@@ -236,7 +252,7 @@ const isValidSelection = () => selectedItems.length > 0 && selectedItems.reduce(
                     transition={{ duration: 0.3, ease: "easeInOut" }}
                                 >
               <div>
-              <div className="text-white overflow-y-auto h-[550px] sm:h-[550px] scrollbar-thin scrollbar-thumb-[#D99673] overflow-x-hidden">
+              <div className="text-white overflow-y-auto h-[550px] sm:h-[60vh] scrollbar-thin scrollbar-thumb-[#D99673] overflow-x-hidden">
                 <h2 className="text-xl font-bold mb-4 ">Menu</h2>
                   <div className="flex justify-center space-x-4 mb-4">
                     <button className={`px-4 py-2 rounded hover:bg-[#B05C40] transition ${activeTab === "snacks" ? "bg-[#D99673]" : "bg-[#6D3A27]"}`} onClick={() => setActiveTab("snacks")}>Snacks</button>
@@ -254,9 +270,9 @@ const isValidSelection = () => selectedItems.length > 0 && selectedItems.reduce(
                  animate={{ opacity: 1, y: 0 }} 
                  exit={{ opacity: 0, y: 10 }} 
                  transition={{ duration: 0.3, ease: "easeInOut" }}
-                 className="bg-[#6D3A27] p-6 rounded-lg shadow-lg text-white overflow-y-auto max-h-[60vh] scrollbar-thin scrollbar-thumb-[#D99673]"
+                 className="bg-[#6D3A27] p-6 rounded-lg shadow-lg text-white overflow-y-auto h-[60vh] scrollbar-thin scrollbar-thumb-[#D99673]"
                >
-                 <h2 className="text-xl font-bold mb-4">Fyll inn informasjon</h2>
+                 <h2 className="text-xl font-bold mb-4">Fill in information</h2>
                
                  <form className="space-y-4">
                    {/* Name */}
@@ -275,11 +291,11 @@ const isValidSelection = () => selectedItems.length > 0 && selectedItems.reduce(
                      onChange={(e) => setUserInfo({...userInfo, eventType: e.target.value})}
                      required
                    >
-                     <option value="" disabled>Velg type arrangement</option>
-                     <option value="bursdag">Bursdag</option>
-                     <option value="bryllup">Bryllup</option>
-                     <option value="firmafest">Firmafest</option>
-                     <option value="annet">Annet</option>
+                     <option value="" disabled>Choose type of event</option>
+                     <option value="bursdag">Birthday</option>
+                     <option value="bryllup">Wedding</option>
+                     <option value="firmafest">Office party</option>
+                     <option value="annet">Other</option>
                    </select>
                
                    {/* "Annet" (Other) Input Field - Only Show When Selected */}
@@ -315,7 +331,7 @@ const isValidSelection = () => selectedItems.length > 0 && selectedItems.reduce(
                    {/* Extra Information Checkbox */}
                    <label className="flex items-center space-x-2">
                      <input type="checkbox" className="w-4 h-4" checked={userInfo.extraInfoChecked} onChange={(e) => setUserInfo({...userInfo, extraInfoChecked: e.target.checked})} />
-                     <span>Ekstra informasjon</span>
+                     <span>Extra information</span>
                    </label>
                
                    {/* Extra Info Textarea - Appears Only If Checkbox is Selected */}
@@ -354,7 +370,7 @@ const isValidSelection = () => selectedItems.length > 0 && selectedItems.reduce(
                                 setShowNextButton(true);  
                               }} 
                             >
-                              Tilbake
+                              Back
                             </button>
                             <button 
                               className="w-full px-6 py-2 rounded transition bg-[#D99673] text-white hover:bg-[#B05C40]"
@@ -379,7 +395,7 @@ const isValidSelection = () => selectedItems.length > 0 && selectedItems.reduce(
                                 alert("Forespørselen er sendt!");
                               }}
                           >
-                      Send Forespørsel
+                      Send Request
                     </button>
                   </>
                 )}
